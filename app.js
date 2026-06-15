@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ],
     drawnNames: [],
     soundEnabled: localStorage.getItem("classbuddy_sound") !== "false",
+    speechEnabled: localStorage.getItem("classbuddy_speech") !== "false",
     activeTab: "picker-tab",
     pickerMode: "wheel", // 'wheel' or 'slot'
     isDrawing: false,
@@ -44,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("classbuddy_roster", JSON.stringify(state.roster));
     localStorage.setItem("classbuddy_teams", JSON.stringify(state.teams));
     localStorage.setItem("classbuddy_sound", state.soundEnabled);
+    localStorage.setItem("classbuddy_speech", state.speechEnabled);
     localStorage.setItem("classbuddy_attendance", JSON.stringify(state.attendance));
     updateRosterCountDisplay();
   }
@@ -219,6 +221,9 @@ document.addEventListener("DOMContentLoaded", () => {
   
   soundToggleBtn.addEventListener("click", () => {
     state.soundEnabled = !state.soundEnabled;
+    if (!state.soundEnabled && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
     updateSoundIcons();
     saveState();
     playSynthSound("tick");
@@ -296,6 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const drawBtn = document.getElementById("draw-btn");
   const resetPickerBtn = document.getElementById("reset-picker-btn");
   const excludeDrawnChk = document.getElementById("exclude-drawn-chk");
+  const speechDrawnChk = document.getElementById("speech-drawn-chk");
   const drawnCountSpan = document.getElementById("drawn-count");
   const drawnListUl = document.getElementById("drawn-list");
   
@@ -501,6 +507,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 3600);
   }
 
+  // Speak winner name using Web Speech API (TTS)
+  function speakWinnerName(name) {
+    if (state.soundEnabled && state.speechEnabled && 'speechSynthesis' in window) {
+      const synth = window.speechSynthesis;
+      synth.cancel(); // 停止目前正在播放的語音
+
+      const utterance = new SpeechSynthesisUtterance(`恭喜 ${name} 中籤！`);
+      utterance.lang = 'zh-TW';
+      utterance.rate = 0.9;   // 語速稍慢，確保班上同學聽得清
+      utterance.pitch = 1.15; // 音調稍高，更為活潑
+
+      const voices = synth.getVoices();
+      const twVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'zh-HK' || v.lang.startsWith('zh-'));
+      if (twVoice) {
+        utterance.voice = twVoice;
+      }
+
+      synth.speak(utterance);
+    }
+  }
+
   // TRIGGER WINNER REVEAL
   function revealWinner(name) {
     if (excludeDrawnChk.checked) {
@@ -514,9 +541,15 @@ document.addEventListener("DOMContentLoaded", () => {
     playSynthSound("win");
     winnerNameDiv.textContent = name;
     winnerModal.classList.add("active");
+
+    // Speak the name
+    speakWinnerName(name);
   }
 
   closeWinnerBtn.addEventListener("click", () => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
     winnerModal.classList.remove("active");
     
     // Redraw wheel to reflect excluded state immediately if enabled
@@ -558,6 +591,15 @@ document.addEventListener("DOMContentLoaded", () => {
   excludeDrawnChk.addEventListener("change", () => {
     initWheel();
   });
+
+  // Speech synthesis toggle initialization & change
+  if (speechDrawnChk) {
+    speechDrawnChk.checked = state.speechEnabled;
+    speechDrawnChk.addEventListener("change", () => {
+      state.speechEnabled = speechDrawnChk.checked;
+      saveState();
+    });
+  }
 
   // Reset Drawer State
   resetPickerBtn.addEventListener("click", () => {
