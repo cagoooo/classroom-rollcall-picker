@@ -460,10 +460,33 @@
               <div class="form-group">
                 <label for="classroom-client-id" class="label-small">Google OAuth Client ID</label>
                 <div class="input-with-button">
-                  <input type="text" id="classroom-client-id" value="YOUR_GOOGLE_CLIENT_ID" placeholder="輸入您的 Client ID (xxxxxx.apps.googleusercontent.com)" class="full-width">
+                  <input type="text" id="classroom-client-id" value="" placeholder="輸入您的 Client ID (xxxxxx.apps.googleusercontent.com)" class="full-width">
                   <button id="save-client-id-btn" class="btn btn-small btn-primary">儲存 ID</button>
                 </div>
-                <p class="input-hint">首次使用需設定。請至 Google Cloud Console 申請 OAuth 憑證並新增您的網頁來源。</p>
+                <button type="button" id="toggle-tutorial-btn" class="btn-link" style="padding: 0; margin-top: 8px; display: inline-flex; align-items: center; gap: 4px; text-decoration: underline; color: #a78bfa; font-weight: 600; background: none; border: none; cursor: pointer; font-size: 0.85rem;">
+                  💡 點我查看「如何申請與設定」憑證指南
+                </button>
+                
+                <div id="classroom-tutorial-box" class="hidden" style="background: rgba(0,0,0,0.25); border: 1px dashed rgba(255,255,255,0.15); border-radius: 8px; padding: 12px; margin-top: 10px; font-size: 0.85rem; line-height: 1.5; text-align: left;">
+                  <ol style="margin: 0; padding-left: 18px; color: #a0aec0; text-align: left;">
+                    <li style="margin-bottom: 6px;">
+                      <strong>前往 GCP 控制台</strong>：進入 <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" style="color: #a78bfa; text-decoration: underline;">憑證設定頁面</a>。
+                    </li>
+                    <li style="margin-bottom: 6px;">
+                      <strong>建立憑證</strong>：點擊「建立憑證」&gt;「OAuth 用戶端 ID」，類型選「<strong>網頁應用程式</strong>」。
+                    </li>
+                    <li style="margin-bottom: 6px;">
+                      <strong>設定「授權來源」白名單 (最重要)</strong>：新增「已授權的 JavaScript 來源」URI，貼上您下方的當前網址來源：
+                      <div style="display: flex; align-items: center; gap: 6px; margin: 6px 0;">
+                        <code id="current-origin-code" style="background: rgba(0,0,0,0.4); padding: 3px 6px; border-radius: 4px; font-family: monospace; color: #fff; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.1);">http://localhost:5500</code>
+                        <button type="button" id="copy-origin-btn" class="btn btn-small" style="padding: 2px 6px; font-size: 0.75rem; min-height: auto;">📋 複製</button>
+                      </div>
+                    </li>
+                    <li>
+                      <strong>儲存</strong>：將生成的用戶端 ID 複製，貼回上方輸入框，點擊「儲存 ID」即可！
+                    </li>
+                  </ol>
+                </div>
               </div>
             </div>
 

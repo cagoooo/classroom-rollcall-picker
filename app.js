@@ -1553,9 +1553,46 @@ document.addEventListener("DOMContentLoaded", () => {
   const importRosterBtn = document.getElementById("import-classroom-roster-btn");
 
   // Load saved client ID
-  const savedClientId = localStorage.getItem("classbuddy_classroom_client_id") || "YOUR_GOOGLE_CLIENT_ID";
-  if (savedClientId) {
+  const savedClientId = localStorage.getItem("classbuddy_classroom_client_id");
+  if (savedClientId && savedClientId !== "YOUR_GOOGLE_CLIENT_ID") {
     clientIdInput.value = savedClientId;
+  } else {
+    clientIdInput.value = "";
+  }
+
+  // Google Classroom Tutorial Instructions & Origin Copying
+  const toggleTutorialBtn = document.getElementById("toggle-tutorial-btn");
+  const tutorialBox = document.getElementById("classroom-tutorial-box");
+  const currentOriginCode = document.getElementById("current-origin-code");
+  const copyOriginBtn = document.getElementById("copy-origin-btn");
+
+  if (currentOriginCode) {
+    currentOriginCode.textContent = window.location.origin;
+  }
+
+  if (toggleTutorialBtn && tutorialBox) {
+    toggleTutorialBtn.addEventListener("click", () => {
+      playSynthSound("click");
+      tutorialBox.classList.toggle("hidden");
+    });
+  }
+
+  if (copyOriginBtn && currentOriginCode) {
+    copyOriginBtn.addEventListener("click", () => {
+      const textToCopy = currentOriginCode.textContent;
+      navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+          playSynthSound("win");
+          copyOriginBtn.textContent = "✅ 已複製";
+          setTimeout(() => {
+            copyOriginBtn.textContent = "📋 複製";
+          }, 2000);
+        })
+        .catch(err => {
+          console.error("Failed to copy text: ", err);
+          alert("複製失敗，請手動複製網址：" + textToCopy);
+        });
+    });
   }
 
   saveClientIdBtn.addEventListener("click", () => {
