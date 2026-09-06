@@ -1,5 +1,7 @@
 # ClassBuddy 🌟 班級互動工具箱
 
+> 🗂️ **一次性專案**：單次建立的課堂點名小工具，內容不再變動，因此不做版本管理。
+
 ClassBuddy 是一款專為國小/國中資訊課與日常教學設計的免主機、輕量級互動網頁工具。結合 Google Classroom 同步，讓老師在大螢幕上能輕鬆點名、隨機抽籤、小組加分，並進行課堂噪音偵測與分組。
 
 🌐 **線上使用網址 (Demo)**：[https://cagoooo.github.io/classroom-rollcall-picker/](https://cagoooo.github.io/classroom-rollcall-picker/)
